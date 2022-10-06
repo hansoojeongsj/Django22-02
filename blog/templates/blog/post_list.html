@@ -2,6 +2,7 @@
 {% load static %}
 <html lang="ko">
     <head>
+        <meta charset="utf-8" />
         <title>Blog</title>
         <link href="{% static 'blog/bootstrap4/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" media="screen"></link>
         <script src="https://kit.fontawesome.com/9c71be1e79.js" crossorigin="anonymous"></script>
@@ -81,7 +82,7 @@
           <h2>Blog</h2>
             {% for p in post_list %}
           <div class="card mb-4">
-            <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/dee2e6/6c757d.jpg" alt="..." /></a>
+            <img class="card-img-top" src="{{p.head_image.url}}" alt="{{...}}" />
             <div class="card-body">
 
                 <h2 class="card-title">{{p.title}}</h2>
