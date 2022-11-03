@@ -1,7 +1,7 @@
 #View: HTTP요청을 수신하고 HTTP응답을 반환하는 요청처리함수
 #Model을 통해 요청을 충족시키는데 필요한 데이터에 접근하고 Template에게 응답의 서식설정을 맡김
 from django.shortcuts import render
-from .models import Post, Category
+from .models import Post, Category, Tag
 from django.views.generic import ListView, DetailView
 
 # Create your views here.
@@ -40,6 +40,17 @@ def category_page(request, slug):
         'categories' : Category.objects.all(),
         'no_category_post_count' : Post.objects.filter(category=None).count
     })
+
+def tag_page(request, slug):
+    tag = Tag.objects.get(slug=slug)
+    post_list = tag.post_set.all()
+    return render(request, 'blog/post_list.html', {
+        'tag' : tag,
+        'post_list' : post_list,
+        'categories' : Category.objects.all(),
+        'no_category_post_count' : Post.objects.filter(category=None).count
+    })
+
 
     # 템플릿 모델명_detail.html : post_detail.html
     # 파라미터 모델명 : post
