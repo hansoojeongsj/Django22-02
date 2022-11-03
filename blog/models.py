@@ -1,8 +1,25 @@
-from django.db import models
+#Model: 데이터 구조를 정의하고 데이터베이스의 기록을 관리(추가,수정,삭제)하고 쿼리하는 방법을 제공하는 파이썬 객체
+#__str__ 함수정의: __str__함수로 모델의 string 표현 방법 정의하기 함수정의하면 post의 pk값과 title로 표현
+#__str__  첫번째 게시물(1) -> [1]첫번째 게시물
+#자동으로 작성 시각과 수정 시각 저장하기 밑에 주석참고
+from django.db import models  #post모델만들기  makemigrations하는건가(데이터베이스에 Post모델 반영하기)
 from django.contrib.auth.models import User
 import os
 
 # Create your models here.
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return f'/blog/category/{self.slug}'
+
+    class Meta:
+        verbose_name_plural = 'Categories'
+
 class Post(models.Model):
     title = models.CharField(max_length=30)
     hook_text = models.CharField(max_length=100, blank=True)
@@ -13,11 +30,15 @@ class Post(models.Model):
     #대문자 Y는 2022인 네 글자를 표현, 소문자 m,d는 앞에꺼 빼고 뒤에 두 글자
     file_upload = models.FileField(upload_to='blog/files/%Y/%m/%d', blank=True)
 
+    # 새로 작성 했을 때 생성: auto_now_add, 수정 했을 때 업데이트: auto_now
+    #하고 마이그레이션 하기(?) python manage.py makemigrations -> migrate -> runserver
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     #추후 author 작성
     author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+
+    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f'[{self.pk}]{self.title} :: {self.author} : {self.created_at}'

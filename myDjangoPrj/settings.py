@@ -1,3 +1,5 @@
+#밑에 내리면 TIME_ZONE = 'Asia/Seoul' 부터 시간설정임. 서울시각으로 맞추고 USE_TZ = False 해줘야 바뀜.
+
 """
 Django settings for myDjangoPrj project.
 
@@ -38,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog',
-    'single_pages'
+    'blog',  #settings.py에 App 추가하기
+    'single_pages' #settings.py에 App 추가하기
 ]
 
 MIDDLEWARE = [

@@ -1,10 +1,15 @@
+#URLs: 요청URL을 기준으로 HTTP요청을 적절한뷰(view)로 보내주기 위해 사용
 from django.urls import path
 from . import views
 
-urlpatterns=[  # IP주소/blog
-    path('', views.PostList.as_view()),
-    path('<int:pk>/', views.PostDetail.as_view())
+urlpatterns=[  # IP주소/blog/
+    path('', views.PostList.as_view()), #urls.py와 views.py와 템플릿파일로 블로그index페이지만들기2
+                                        #ListView로 포스트목록페이지 만들기
+    path('<int:pk>/', views.PostDetail.as_view()),  #DetailView로포스트상세페이지만들기
+    path('category/<str:slug>/', views.category_page)
 
     #path('', views.index), # IP주소/blog
     #path('<int:pk>/', views.single_post_page)
 ]
+        #ListView는(모델명)_list.html을템플릿으로인지  index.html을post_list.html로변경
+        #DetailView는(모델명)_detail.html을템플릿으로인지  single_post_page.html을post_detail.html로변경

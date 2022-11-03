@@ -1,0 +1,211 @@
+-장고 프로젝트에서 앱 개발하기-
+blog directory : 블로그 앱
+single_pages : 페이지 앱
+apps/migrations/:데이터베이스파일을보관하는디렉토리
+•apps/_init_.py:Python으로하여금이디렉토리를패키지처럼다루라고알려주는 용도의단순한빈파일
+•apps/admin.py:앱에대한관리자사이트에대한설정을하는파일
+•apps/apps.py:앱에대한기본설정정보를담고있는파일
+•apps/models.py:모델에대한정보를정의하고저장하는파일.테이블을생성하고 테이블의필드가정의된파일.
+•apps/tests.py:testcase를다루는파일
+•apps/urls.py:앱에대한url정보를설정하는파일
+•apps/views.py:앱에대한뷰를설정하는파일
+
+모델 만들기(Post)
+blog/models.py, myDjangoPrj/settings.py
+관리자 페이지에 Post 모델 추가하기
+blog/admin.py
+__str__ 함수로 모델의 string 표현 방법 정의하기
+blog/models.py
+서울 기준으로 작성 시각 설정하기
+myDjangoPrj/settings.py
+자동으로 작성 시각과 수정 시각 저장하기
+blog/models.py
+
+-웹페이지 만들기-
+URL 설정하기
+urls.py
+•표지판역할
+•장고로 개발한 웹사이트에 방문 했을 때 어떤 페이지로 들어가야 하는지 알려줌
+•path(‘admin/’,admin.site.urls)
+•웹브라우저에서“http://서버IP/admin”으로접속하면 admin.site.urls 함수호출
+
+FEV스타일로 post_list 페이지 만들기
+urls.py와 view.py와 템플릿 파일로 블로그 index페이지 만들기
+myDjangoPrj/urls.py 에서 서버 IP, blog/urls.py에서 서버 IP/blog,
+blog/views.py 에서 사용할 템플릿(예시. return render(request\n 'blog/index.html')) 연결.
+쿼리로 post 목록 가져오기
+
+템플릿 문법
+Template태그:{%문법%}
+•{%forin%}~{%endfor%}
+•{%if%}.{%elif%}.{%else%}.{%endif%}
+•{%with변수명='값'%}
+•{%csrf_token%}
+•Template변수:{{변수}}
+•Template필터:{{변수|옵션}}
+최신 포스트부터 보여주기
+모델명.objects.al().order_by(‘-pk’) : pk역순으로 나열
+
+FBV로 post_detail 페이지 만들기
+blog/urls.py 에 URL에서 가져온 pk와 일치하는 post를 가져옴: 모델명.objects.get(pk='pk')
+blog/urls.py ->blog/views.py->blog/single_post_page.html(?)
+
+get_absolute_url()으로 고유URL 부여하기
+개별 레코드의 고유URL을 모델에서 get_absolute_url()로 정의
+blog/models.py -> blog/single_post_page.html(?)
+
+-정적 파일 관리(CSS 파일 적용하기)
+HTML파일에 CSS파일이 적용되는 과정
+클라이언트: myDjangoPrj/blog/ 접속
+서버: post_list.html 전송
+클라이언트: bootstrap.min.css 파일 요청
+서버: bootstrap.min.css 파일 전송
+클라이언트: 렌더링 후 출력
+
+Django에서는자바스크립트,CSS,이미지등의파일들을정적(Static)파일이라부른다.
+templates의HTML파일은정적파일이아님
+클라이언트에게CS를제공하기위해서정적파일을따로제공할수있어야함
+
+앱폴더에 static폴더 만들고,CSS파일넣기
+앱폴더 안에 static폴더 만든 뒤,그 안에 다시 앱이름으로 된 폴더(blog)를 생성해야함
+다시runserver를실행해야  static인식됨
+
+-미디어파일관리하기(ImageField)-
+업로드한파일이저장될폴더지정하기(myDjangoPrj/settings.py)
+이미지파일을저장할수있는ImageField(blog/models.py)
+Setings.py에서 설정한_media폴더 아래,blog/images/폴더 아래,연도,월,일 순서로 저장
+한폴더에 너무 많은 파일을 저장하면,서버에서 파일을 찾을때 많은 부담을 주게됨
+blank=True라고하면,필수항목은아니라는 뜻
+데이터베이스에변경사항반영하기(cmder에서 python manage.py makemigrations, migrate)
+
+-미디어파일을위한URL처리하기-
+미디어파일을위한URL지정하기(myDjangoPrj/urls.py)
+head_image의이미지파일을템플릿에서출력(blog/templates/blog/post_list.html)
+
+-파일업로드를위한FileField-
+blog/models.py
+ImageField와크게다르지않음
+FileField로만변경
+
+-템플릿 파일(HTML)에서 if문 사용하기-
+blog/templates/blog/post_list.html
+ifelse문으로head_image가있는경우와없는경우구분하여처리하기
+head_image가있는경우,그대로보여주고,
+없는경우LoremPicsum에서임의의이미지보여주기
+{%if조건%}
+보여주고싶은내용A
+{%else%}
+보여주고싶은내용B
+{%endif%}
+ifelse문으로첨부파일이있는경우다운로드버튼만들기
+file_upload에파일이담겨있을때,버튼보여주기
+
+-템플릿 필터 사용하기-
+blog/templates/blog/post_list.html
+truncatewords 혹은 truncatechars로 텍스트 일부만 보여주기
+첫 100 문자만 보여주고 싶을 때 -> |truncatechars:100
+첫 45 문자만 보여주고 싶을 때 -> |truncatechars:45
+
+-테스트 주도 개발-
+테스트코드 작성
+•각장고앱에test.py생성
+•TestCase클래스상속
+•Test로시작하는클래스작성
+•test로시작하는함수(메소드)작성
+테스트명령어실행
+•CMDER:pythonmanage.pytest
+Beautifulsoup4설치
+
+테스트코드 작성
+asertEqual(a,b)     a=b
+asertNotEqual(a,b)  a!=b
+asertTrue(x)        bool(x)isTrue
+asertFalse(x)       bool(x)isFalse
+asertIs(a,b)        a is b
+asertIsNot(a,b)     a is not b
+asertIsNone(x)      x is None
+asertIsNotNone(x)   x is not None
+asertIn(a,b)        a in b
+asertNotIn(a,b)     a not in b
+asertIsInstance(a,b) isinstance(a,b)
+asertNotIsInstance(a,b) not isinstance(a,b)
+
+-템플릿 모듈화-
+페이지 구성 요소 모듈화
+block과 extends
+
+blog/templates/blog/base.html에서
+{% block블록이름 %}
+base.html을 바탕으로 활용할 html템플릿에서
+이부분을 정의해서 채워넣을 수 있음
+{% endblock %}
+
+blog/templates/blog/post_list.html에서
+{%extends파일명%}
+바탕이될템플릿파일을 지정
+
+include: 포함하고 싶은 템플릿(html) 정의
+blog/templates/blog/base.html 에서 {% include 'blog/navbar.html' %}나 footer처럼
+
+-다대일 관계-
+A모델의 여러레 코드가 B모델의 한 레코드에 연결될 수 있는 관계 (Category 했던 거 같은데)
+
+on_delete=models.CASCADE일때 (오류발생가능성 언급)
+blog/models.py에서 auther = models.ForeignKey(User, on_delete=models.CASCADE)
+ForeignKey: 다대일관계를 정의
+Post의작성자를 다대일구조로 User모델과연결
+on_delete:연결되어있던 User가 삭제될때
+•models.CASCADE  연결되어있는 post레코드까지 함께 삭제
+
+on_delete=models.SET_NULL일때
+blog/models.py에서
+ForeignKey:다대일관계를정의
+nul=True  •해당필드값이공란이어도OK
+on_delete:연결되어있던User가삭제될때
+•models.SET_NULL  해당필드값을NULL(None)으로바꿈
+
+SlugField(Category모델만들기)
+숫자인pk(primarykey)대신,읽을수있는텍스트로URL을만들고싶을때주로사용
+blog/models.py에서
+unique=True  유일한값을가져야함
+->이미‘python’이라는category레코드가존재할경우,
+다른레코드의name필드는‘python’이될수없도록강제
+한글?
+alow_unicode=True  원래SlugField는한글은허용하지않으나,
+alow=True를  설정하면한글도사용할수있음
+
+SlugField자동으로생성하는admin기능만들기
+prepopulated_fields: name필드값으로slug를자동생성하도록설정
+blog/admin.py에서
+
+Post모델의category필드공란허용하기
+blog/models.py
+category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
+nul=True  DB상에공란으로저장될수있도록허용
+blank=True  admin이나form에서유효성검사할때,공란허용
+
+get_context_data&모델명.objects.filter(조건)
+CBV에서 추가로 넘기고 싶은 인자가 있을 때 사용
+blog/views.py
+def get_context_data(self,**kwargs):
+    context = super~
+    context['categories'] = Cat~
+    context['no_category_post_count']=Post.ob~
+    return context
+CBV는get_context_data함수를 내장하고 있으므로,오버라이딩한 후,
+추가하고 싶은 요소를 context딕셔너리에 담아 템플릿으로 보낼 수 있음
+Post.objects.al()과달리, 특정 조건인 레코드만 필터링 할 때 사용
+->category=None인Post만필터링
+
+모델명_set
+ForeignKey에서 정보를 받아올 때 사용
+•모델Post의 ForeignKeyCategory는 다대일관계
+하나의Category에 여러개의Post가 포함되는 관계
+특정Category에 속하는 Post정보를 받아오기위해 post_set사용
+categoty_programming.post_set.all()
+categoty_programming.post_set.count()
+
+기출
+생성된2개의Django앱을Django프로젝트에등록하시오.
+settings.py들어가서
+installed_apps에 'django앱이름', 'django앱이름' 작성
