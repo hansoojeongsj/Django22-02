@@ -7,6 +7,7 @@ urlpatterns=[  # IP주소/blog/
                                         #ListView로 포스트목록페이지 만들기
     path('<int:pk>/', views.PostDetail.as_view()),  #DetailView로포스트상세페이지만들기
     path('create_post/', views.PostCreate.as_view()),
+    path('update_post/<int:pk>/', views.PostUpdate.as_view()),
     path('category/<str:slug>/', views.category_page), #IP주소/blog/category/slug/
 
     path('tag/<str:slug>/', views.tag_page) #IP주소/blog/tag/slug/
