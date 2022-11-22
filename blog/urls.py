@@ -6,6 +6,7 @@ urlpatterns=[  # IP주소/blog/
     path('', views.PostList.as_view()), #urls.py와 views.py와 템플릿파일로 블로그index페이지만들기2
                                         #ListView로 포스트목록페이지 만들기
     path('<int:pk>/', views.PostDetail.as_view()),  #DetailView로포스트상세페이지만들기
+    path('<int:pk>/new_comment/', views.new_comment),
     path('create_post/', views.PostCreate.as_view()),
     path('update_post/<int:pk>/', views.PostUpdate.as_view()),
     path('category/<str:slug>/', views.category_page), #IP주소/blog/category/slug/

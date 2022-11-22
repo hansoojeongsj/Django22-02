@@ -69,3 +69,16 @@ class Post(models.Model):
         #b.docx -> b docx
         #c.xlsx -> c xlsx
         #a.b.c.txt -> a b c txt [1]인 경우 b가 리턴됨. 확장자 아님.
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE) #on_delete=models.CASCADE 유저가 지워지면 모두 다 지워지게?
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.author} : {self.content}'
+
+    def get_absolute_url(self):
+        return f'{self.post.get_absolute_url()}#comment-{self.pk}'
