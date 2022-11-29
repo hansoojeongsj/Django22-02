@@ -69,6 +69,11 @@ class Post(models.Model):
         #b.docx -> b docx
         #c.xlsx -> c xlsx
         #a.b.c.txt -> a b c txt [1]인 경우 b가 리턴됨. 확장자 아님.
+    def get_avatar_url(self):
+        if self.author.socialaccount_set.exists():
+            return self.author.socialaccount_set.first().get_avatar_url()
+        else:
+            return 'https://dummyimage.com/50x50/ced4da/6c757d.jpg'
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
